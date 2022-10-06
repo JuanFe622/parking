@@ -5,6 +5,10 @@ namespace App\Http\Controllers\api\v1;
 use App\Http\Controllers\Controller;
 use App\Models\Vehiculo;
 use Illuminate\Http\Request;
+use App\Http\Requests\api\v1\VehiculoStoreRequest;
+use App\Http\Requests\api\v1\VehiculoUpdateRequest;
+use App\Http\Resources\api\v1\VehiculoCollection;
+use App\Http\Resources\api\v1\VehiculoResource;
 
 class VehiculoController extends Controller
 {
@@ -15,10 +19,14 @@ class VehiculoController extends Controller
      */
     public function index()
     {
-        $vehiculo = Vehiculo::orderBy('placa', 'asc')->get();
+        $vehiculos = Vehiculo::orderBy('id', 'asc')->get();
  
-        return response()->json(['data' => $vehiculos], 200);
+        //return response()->json(['data' => $vehiculos], 200);
 
+        return (new VehiculoCollection($vehiculos))
+            ->response()
+            ->setStatusCode(200);
+        
     }
 
     /**
@@ -27,7 +35,7 @@ class VehiculoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(VehiculoStoreRequest $request)
     {
         $vehiculo = Vehiculo::create($request->all());
  
@@ -52,7 +60,7 @@ class VehiculoController extends Controller
      * @param  \App\Models\Vehiculo  $vehiculo
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Vehiculo $vehiculo)
+    public function update(VehiculoUpdateRequest $request, Vehiculo $vehiculo)
     {
         $vehiculo->update($request->all());
  

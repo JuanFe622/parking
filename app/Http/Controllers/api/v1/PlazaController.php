@@ -5,6 +5,9 @@ namespace App\Http\Controllers\api\v1;
 use App\Http\Controllers\Controller;
 use App\Models\Plaza;
 use Illuminate\Http\Request;
+use App\Http\Requests\api\v1\PlazaStoreRequest;
+use App\Http\Requests\api\v1\PlazaUpdateRequest;
+use App\Http\Resources\api\v1\PlazaCollection;
 
 class PlazaController extends Controller
 {
@@ -15,9 +18,13 @@ class PlazaController extends Controller
      */
     public function index()
     {
-        $plaza = Plaza::orderBy('estado', 'asc')->get();
+        $plazas = Plaza::orderBy('estado', 'asc')->get();
  
-        return response()->json(['data' => $plazas], 200);
+        //return response()->json(['data' => $plazas], 200);
+
+        return (new PlazaCollection($plazas))
+            ->response()
+            ->setStatusCode(200);
     }
 
     /**
@@ -26,7 +33,7 @@ class PlazaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PlazaStoreRequest $request)
     {
         $plaza = Plaza::create($request->all());
  
@@ -51,7 +58,7 @@ class PlazaController extends Controller
      * @param  \App\Models\Plaza  $plaza
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Plaza $plaza)
+    public function update(PlazaUpdateRequest $request, Plaza $plaza)
     {
         $plaza->update($request->all());
  

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\api\v1;
 use App\Http\Controllers\Controller;
 use App\Models\Tarifa;
 use Illuminate\Http\Request;
+use App\Http\Requests\api\v1\TarifaStoreRequest;
+use App\Http\Requests\api\v1\TarifaUpdateRequest;
+use App\Http\Resources\api\v1\TarifaCollection;
 
 class TarifaController extends Controller
 {
@@ -15,9 +18,13 @@ class TarifaController extends Controller
      */
     public function index()
     {
-        $tarifa = Tarifa::orderBy('tipó', 'asc')->get();
+        $tarifas = Tarifa::orderBy('tipo', 'asc')->get();
  
-        return response()->json(['data' => $tarifas], 200);
+        //return response()->json(['data' => $tarifas], 200);
+
+        return (new TarifaCollection($tarifas))
+            ->response()
+            ->setStatusCode(200);
     }
 
     /**
@@ -26,7 +33,7 @@ class TarifaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TarifaStoreRequest $request)
     {
         $tarifa = Tarifa::create($request->all());
  
@@ -51,7 +58,7 @@ class TarifaController extends Controller
      * @param  \App\Models\Tarifa  $tarifa
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tarifa $tarifa)
+    public function update(TarifaUpdateRequest $request, Tarifa $tarifa)
     {
         $tarifa->update($request->all());
  
